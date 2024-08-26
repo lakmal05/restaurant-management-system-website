@@ -11,10 +11,10 @@ const GalleryItem = ({ item, index, marginBottom }) => {
   return (
     <>
       <div className={`sb-gallery-item ${item.orientation != "h" ? "sb-gallery-vert" : ""} sb-mb-${marginBottom}`}>
-        <img src={item.url} alt={item.alt} />
+        <img src={item?.src} alt="gallery image" />
 
         {/* button */}
-        <a data-fancybox="gallery" data-no-swup href={item.url} className="sb-btn sb-btn-2 sb-btn-icon sb-btn-gray sb-zoom" onClick={ (e) => { e.preventDefault(); setImg(true); setImgValue( [{ "src": item.url, "alt": item.alt }] ); }}>
+        <a data-fancybox="gallery" data-no-swup href={item?.src} className="sb-btn sb-btn-2 sb-btn-icon sb-btn-gray sb-zoom" onClick={ (e) => { e.preventDefault(); setImg(true); setImgValue( [{ "src": item?.src, "alt": "gallery image" }] ); }}>
             <span className="sb-icon">
                 <img src="/img/ui/icons/zoom.svg" alt="icon" />
             </span>

@@ -1,25 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { mapboxInit } from "@common/mapboxInit";
+
 
 const ContactMapSection = () => {
-  const [mapLock, setMapLock] = useState(false);
-
-  useEffect(() => {
-    mapboxInit();
-  }, []);
-
   return (
     <>
-        {/* map */}
-        <div className="sb-map-frame">
-            <div id="map" className={`sb-map ${mapLock ? "sb-active": ""}`} />
-            <div className={`sb-lock ${mapLock ? "sb-active": ""}`} onClick={() => setMapLock(!mapLock)}>
-              <i className={`fas ${mapLock ? "fa-unlock": "fa-lock"}`} />
-            </div>
-        </div>
-        {/* map end */}
+      {/* map */}
+
+      <div className="map-box">
+        <iframe src="https://maps.google.com/maps?q=new%20york&t=&z=13&ie=UTF8&iwloc=&output=embed" />
+      </div>
+      {/* map end */}
     </>
   );
 };
