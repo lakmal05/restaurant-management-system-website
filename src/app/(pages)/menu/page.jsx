@@ -1,24 +1,50 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-
-import AppData from "@data/app.json";
-import MenuData from "@data/menu.json";
-
 import PageBanner from "@components/PageBanner";
 import PromoSection from "@components/sections/Promo";
+import { getAllCategories } from "@/src/service/categoriesService";
 
 const MenuFiltered = dynamic(() => import("@components/menu/MenuFiltered"), {
   ssr: false,
 });
 
-export const metadata = {
-  title: {
-    default: "Menu 3",
-  },
-  description: AppData.settings.siteDescription,
-};
 
 const Menu3 = () => {
+  const [categoryList, setCategoryList] = useState([]);
+
+  // let dispatch = useDispatch();
+
+  useEffect(() => {
+    document.title = "Menu | Taste Budz Restaurant ";
+    loadAllCatagories();
+  }, []);
+
+  const loadAllCatagories = () => {
+    let temp = [];
+    // popUploader(dispatch, true);
+    getAllCategories()
+      .then(async (resp) => {
+        console.log(resp);
+
+        resp?.data?.records.map((category, index) => {
+          if (category?.status === 1) {
+            temp.push({
+              id: category?.id,
+              name: category?.name,
+              slug: category?.name,
+            });
+          }
+        });
+        await setCategoryList(temp);
+        // popUploader(dispatch, false);
+      })
+      .catch((err) => {
+        // popUploader(dispatch, false);
+        handleError(err);
+      });
+  };
+
   return (
     <>
       <PageBanner
@@ -38,7 +64,7 @@ const Menu3 = () => {
           <div></div>
         </div>
         <div className="container">
-          <MenuFiltered categories={MenuData.categories} />
+          <MenuFiltered categories={categoryList} />
         </div>
       </section>
       {/* menu end */}
