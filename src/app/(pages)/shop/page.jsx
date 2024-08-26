@@ -2,7 +2,6 @@ import React from "react";
 import dynamic from "next/dynamic";
 
 import AppData from "@data/app.json";
-import Products from "@data/products";
 
 import PageBanner from "@components/PageBanner";
 import PromoSection from "@components/sections/Promo";
@@ -34,7 +33,7 @@ const Shop = () => {
       />
       <CategoriesSection heading={0} paddingTop={90} type={2} columns={4} />
       <ProductsSlider
-        items={Products.collection["popular"]}
+        // items={Products.collection["popular"]}
         title={"Most <span>popular</span> dishes"}
         description={
           "Consectetur numquam poro nemo veniam<br>eligendi rem adipisci quo modi."
@@ -49,7 +48,7 @@ const Shop = () => {
       />
       <CallToActionThreeSection />
       <ProductsSlider
-        items={Products.collection["bestseller"]}
+        // items={Products.collection["bestseller"]}
         title={"Our <span>Bestsellers</span>"}
         description={
           "Consectetur numquam poro nemo veniam<br>eligendi rem adipisci quo modi."
