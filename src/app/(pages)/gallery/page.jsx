@@ -1,25 +1,55 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-
-import AppData from "@data/app.json";
-import GalleryData from "@data/gallery.json";
-
 import PageBanner from "@components/PageBanner";
 import CallToActionSection from "@components/sections/CallToAction";
+import { getAllGalleryImages } from "@/src/service/galleryService";
 
 const GalleryMasonry = dynamic(
   () => import("@components/gallery/GalleryMasonry"),
   { ssr: false }
 );
 
-export const metadata = {
-  title: {
-    default: "Gallery",
-  },
-  description: AppData.settings.siteDescription,
-};
-
 const Gallery1 = () => {
+  const [galleryList, setGalleryList] = useState([]);
+
+  //-------------------------- pagination --------------------------
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalRecodes, setTotalRecodes] = useState(0);
+
+  // let dispatch = useDispatch();
+
+  useEffect(() => {
+    document.title = "Gallery | Taste Budz Restaurant";
+    loadAllGallery(currentPage);
+  }, []);
+
+  const loadAllGallery = (currentPage) => {
+    let temp = [];
+    setGalleryList([]);
+    // popUploader(dispatch, true);
+    getAllGalleryImages(currentPage)
+      .then((resp) => {
+        resp?.data.map((gallery, index) => {
+          temp.push({
+            id: gallery?.id,
+            src: gallery?.file?.originalPath,
+          });
+        });
+        console.log(temp);
+
+        setGalleryList(temp);
+        // setCurrentPage(resp?.data?.currentPage);
+        // setTotalRecodes(resp?.data?.totalCount);
+        // popUploader(dispatch, false);
+      })
+      .catch((err) => {
+        // popUploader(dispatch, false);
+        handleError(err);
+      });
+  };
+
   return (
     <>
       <PageBanner
@@ -34,7 +64,7 @@ const Gallery1 = () => {
       {/* gallery */}
       <div className="sb-p-90-60">
         <div className="container">
-          <GalleryMasonry items={GalleryData.items} layout={1} />
+          <GalleryMasonry items={galleryList} layout={1} />
 
           <div>
             <ul className="sb-pagination">

@@ -12,15 +12,17 @@ import {
   Button,
 } from "reactstrap";
 import Image from "next/image";
-import { customToastMsg, validateInputs } from "../../../util/CommonFun";
+import { customToastMsg, popUploader, validateInputs } from "../../../util/CommonFun";
 import logo from "../../../../public/img/ui/TastBudzLogo.png";
 import { isEmail, isEmpty, isPassword } from "../../../util/enum";
 import * as constant from "../../../util/constants";
 import { useRouter } from "next/navigation";
 import { createAccount } from "@/src/service/auth";
+import { useDispatch } from "react-redux";
 
 const Page = () => {
   const router = useRouter();
+  //  const dispatch = useDispatch();
 
   const [temp, setTemp] = useState({
     email: "",
@@ -40,17 +42,17 @@ const Page = () => {
   };
 
   const handleSignIn = async () => {
-    // dispatch(setLoading(true));
+    // popUploader(dispatch, true);
 
     console.log("Customized Form Data:", temp);
 
     createAccount(temp)
       .then((res) => {
         window.location.href = "/login";
-        // dispatch(setLoading(false));
+        // popUploader(dispatch, false);
       })
       .catch((c) => {
-        // dispatch(setLoading(false));
+        // popUploader(dispatch, false);
         customToastMsg(c.message, 0);
       });
   };
