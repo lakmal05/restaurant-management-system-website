@@ -15,7 +15,7 @@ const DefaultHeader = () => {
   const [openSubMenu, setOpenSubMenu] = useState(false);
   const [miniCart, setMiniCart] = useState(false);
   const [miniSidebar, setMiniSidebar] = useState(false);
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(false); //convert to redux later
   const asPath = usePathname();
 
   const isPathActive = (path) => {

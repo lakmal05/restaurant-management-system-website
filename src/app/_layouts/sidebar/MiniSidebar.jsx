@@ -14,7 +14,7 @@ const MiniSidebar = () => {
                     <li><b>Address:</b><span>Montréal, 1510 Rue Sauvé</span></li>
                     <li><b>Working hours:</b><span>09:00 - 23:00</span></li>
                     <li><b>Phone:</b><span>+02 (044) 756-X6-52</span></li>
-                    <li><b>Email:</b><span>starbelly@mail.com</span></li>
+                    <li><b>Email:</b><span>tastebudz@mail.com</span></li>
                 </ul>
                 <div className="sb-ib-title-frame sb-mb-30">
                     <h4>Instagram</h4><i className="fas fa-arrow-down"></i>
