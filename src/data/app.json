@@ -1,15 +1,8 @@
 {
   "settings": {
-    "siteName": "Starbelly",
-    "siteDescription": "Restaurant React Next.JS Template",
+    "siteName": "Taste Budz Restaurant",
+    "siteDescription": "Taste Budz Restaurant",
     "formspreeURL": "https://formspree.io/f/your_api_key",
-    "mapbox": {
-      "AccessToken": "*",
-      "style": "mapbox://styles/mapbox/light-v11",
-      "zoom": 15,
-      "long": -79.3949,
-      "lat": 43.643102
-    },
     "perPage": 6
   },
   "header": {
@@ -79,7 +72,7 @@
     ]
   },
   "footer": {
-    "copy": "© 2024 Starbelly. All rights reserved."
+    "copy": "© 2024 Taste Budz. All rights reserved."
   },
   "social": [
     {
