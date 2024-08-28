@@ -1,4 +1,4 @@
-const URL_REMOTE = "http://45.55.37.84:4002"; //local
+const URL_REMOTE = "http://localhost:4008"; //local
 
 const conf = {
   serverUrl: URL_REMOTE,
