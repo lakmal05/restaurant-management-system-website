@@ -1,9 +1,7 @@
 import Header from "@layouts/headers/Index";
 import Footer from "@layouts/footers/Index";
 
-const PagesLayouts = ({
-  children
-}) => {
+const PagesLayouts = ({ children }) => {
   return (
     <>
       <Header layout={"default"} />
@@ -11,7 +9,7 @@ const PagesLayouts = ({
       {/* dynamic content */}
       <div id="sb-dynamic-content" className="sb-transition-fade">
         {children}
-        
+
         <Footer layout={"default"} />
       </div>
       {/* dynamic content end */}

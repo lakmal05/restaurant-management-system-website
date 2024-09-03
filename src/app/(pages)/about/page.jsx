@@ -9,6 +9,7 @@ import FeaturesOneSection from "@/src/app/_components/sections/Features";
 import PromoVideoSection from "@components/sections/PromoVideo";
 import TeamSection from "@components/sections/Team";
 import CallToActionTwoSection from "@components/sections/CallToActionTwo";
+import ServicersSection from "../../_components/sections/Servicers";
 
 const TestimonialSlider = dynamic(
   () => import("@components/sliders/Testimonial"),
@@ -37,6 +38,7 @@ const About1 = () => {
       />
       <AboutTwoSection />
       <FeaturesOneSection />
+      <ServicersSection />
       <PromoVideoSection />
       <TeamSection />
       <TestimonialSlider />

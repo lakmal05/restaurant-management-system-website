@@ -1,21 +1,30 @@
-import React from "react";
-
-import AppData from "@data/app.json";
-import CartData from "@data/cart.json";
-
+"use client";
+import React, { useEffect, useState } from "react";
 import PageBanner from "@components/PageBanner";
-import CartItem from "@components/products/CartItem"
+import CartItem from "@components/products/CartItem";
 
 import Link from "next/link";
 
-export const metadata = {
-  title: {
-		default: "Shopping Cart",
-	},
-  description: AppData.settings.siteDescription,
-}
-
 const Cart = () => {
+  const [cartDetails, setCartDetails] = useState([]);
+  const [cartSubTotal, setCartSubTotal] = useState(0);
+  const [cartTotal, setCartTotal] = useState(0);
+
+  useEffect(() => {
+    document.title = "Shopping Cart | Taste Budz Restaurant";
+    setCartDetails(
+      localStorage.getItem("CART_LIST")
+        ? JSON.parse(localStorage.getItem("CART_LIST"))
+        : []
+    );
+  }, []);
+
+  useEffect(() => {
+    const total = cartDetails.reduce((acc, item) => acc + item.total, 0);
+    setCartSubTotal(total);
+    setCartTotal(total + 250);
+  }, [cartDetails]);
+
   return (
     <>
       <PageBanner pageTitle={"Your order."} breadTitle={"Cart"} type={1} />
@@ -34,8 +43,8 @@ const Cart = () => {
               </div>
             </div>
 
-            {CartData.items.map((item, key) => (
-            <CartItem item={item} key={key} />
+            {cartDetails.map((item, key) => (
+              <CartItem item={item} key={key} />
             ))}
 
             <div className="row justify-content-end">
@@ -47,17 +56,21 @@ const Cart = () => {
                         <div className="sb-total-title">Subtotal:</div>
                       </div>
                       <div className="col-4">
-                        <div className="sb-price-1 text-right">$32.99</div>
+                        <div className="sb-price-1 text-right">
+                          LKR {" " + cartSubTotal.toFixed(2)}
+                        </div>
                       </div>
                     </div>
                   </div>
                   <div className="sb-sum">
                     <div className="row">
                       <div className="col-8">
-                        <div className="sb-total-title">Estimated shipping:</div>
+                        <div className="sb-total-title">
+                          Estimated delivery charges:
+                        </div>
                       </div>
                       <div className="col-4">
-                        <div className="sb-price-1 text-right">$5</div>
+                        <div className="sb-price-1 text-right">LKR 250.00</div>
                       </div>
                     </div>
                   </div>
@@ -67,7 +80,9 @@ const Cart = () => {
                         <div className="sb-total-title">Total:</div>
                       </div>
                       <div className="col-4">
-                        <div className="sb-price-2 text-right">$37.99</div>
+                        <div className="sb-price-2 text-right">
+                          LKR {" " + cartTotal.toFixed(2)}
+                        </div>
                       </div>
                     </div>
                   </div>

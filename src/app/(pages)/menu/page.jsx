@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import PageBanner from "@components/PageBanner";
 import PromoSection from "@components/sections/Promo";
 import { getAllCategories } from "@/src/service/categoriesService";
+import { handleError } from "@/src/util/CommonFun";
 
 const MenuFiltered = dynamic(() => import("@components/menu/MenuFiltered"), {
   ssr: false,

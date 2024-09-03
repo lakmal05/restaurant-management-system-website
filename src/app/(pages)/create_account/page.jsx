@@ -12,7 +12,11 @@ import {
   Button,
 } from "reactstrap";
 import Image from "next/image";
-import { customToastMsg, popUploader, validateInputs } from "../../../util/CommonFun";
+import {
+  customToastMsg,
+  popUploader,
+  validateInputs,
+} from "../../../util/CommonFun";
 import logo from "../../../../public/img/ui/TastBudzLogo.png";
 import { isEmail, isEmpty, isPassword } from "../../../util/enum";
 import * as constant from "../../../util/constants";
@@ -31,7 +35,6 @@ const Page = () => {
     firstName: "",
     lastName: "",
     contactNo: "",
-    address: "",
   });
 
   const handleInputChange = (fieldName, value) => {
@@ -44,9 +47,15 @@ const Page = () => {
   const handleSignIn = async () => {
     // popUploader(dispatch, true);
 
-    console.log("Customized Form Data:", temp);
+    const data = {
+      firstName: temp.firstName,
+      lastName: temp.lastName,
+      contactNo: temp.contactNo,
+      email: temp.email,
+      password: temp.password,
+    };
 
-    createAccount(temp)
+    createAccount(data)
       .then((res) => {
         window.location.href = "/login";
         // popUploader(dispatch, false);
@@ -58,11 +67,18 @@ const Page = () => {
   };
 
   const validateInputsDetails = () => {
-    const { email, password } = temp;
-    if (!validateInputs(email, ["isEmpty", "isEmail"]).isValid) {
-      alert(validateInputs(email, ["isEmpty", "isEmail"]).errorMessage);
-    } else if (!validateInputs(password, ["isEmpty"]).isValid) {
-      alert(validateInputs(password, ["isEmpty"]).errorMessage);
+    if (temp.firstName === "") {
+      alert("First name cannot be empty");
+    } else if (temp.lastName === "") {
+      alert("Last name cannot be empty");
+    } else if (!validateInputs(temp.password, ["isEmpty"]).isValid) {
+      alert(validateInputs(temp.password, ["isEmpty"]).errorMessage);
+    } else if (temp.password !== temp?.con_password) {
+      customToastMsg("Recheck confirmation password");
+    } else if (temp.contactNo === "") {
+      alert("Contact No cannot be empty");
+    } else if (!validateInputs(temp.email, ["isEmpty", "isEmail"]).isValid) {
+      alert(validateInputs(temp.email, ["isEmpty", "isEmail"]).errorMessage);
     } else {
       handleSignIn();
     }
@@ -192,21 +208,6 @@ const Page = () => {
                       </FormGroup>
                     </Col>
                   </Row>
-
-                  {/* address */}
-                  <FormGroup name="address" label="Address">
-                    <Input
-                      placeholder="Enter your address"
-                      size="large"
-                      onChange={(e) =>
-                        handleInputChange("address", e.target.value)
-                      }
-                      type="text"
-                      id="address"
-                      value={temp.address}
-                      required
-                    />
-                  </FormGroup>
 
                   <Row>
                     <Col md={12} className="d-flex justify-content-end">

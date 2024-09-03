@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { setLoading } from "../../../redux/actions/loadingActions";
 import * as constant from "../../../util/constants";
 import { loginService } from "@/src/service/auth";
 import Cookies from "js-cookie";
@@ -19,8 +18,9 @@ import {
   Input,
   Row,
 } from "reactstrap";
-import { useDispatch } from "react-redux";
 import Image from "next/image";
+import { useDispatch } from "react-redux";
+import { customToastMsg, handleError, popUploader } from "@/src/util/CommonFun";
 
 const SignInPage = () => {
   const [temp, setTemp] = useState({ email: "", password: "" });
@@ -37,28 +37,29 @@ const SignInPage = () => {
   const validateInputsDetails = () => {
     // Replace this with your own validation logic
     if (!temp.email || !temp.password) {
-      alert("Please enter a valid email and password");
+      customToastMsg("Please enter a valid email and password");
     } else {
       login();
     }
   };
 
   const login = () => {
-    // dispatch(setLoading(true));
+    // popUploader(dispatch, true);
     loginService(temp)
       .then((res) => {
-        if (res.token) {
-          Cookies.set(constant.ACCESS_TOKEN, res.token);
-          Cookies.set(constant.REFRESH_TOKEN, res.refreshToken);
-          Cookies.set(constant.Expire_time, res.tokenExpires);
-          Cookies.set(constant.USER_PROFILE, JSON.stringify(res.user));
+        if (res?.data?.token) {
+          Cookies.set(constant.ACCESS_TOKEN, res?.data?.token?.access_token);
+          Cookies.set(constant.REFRESH_TOKEN, res?.data?.token?.refresh_token);
+          Cookies.set(constant.USER_PROFILE, JSON.stringify(res?.data?.user));
+          // Cookies.set(constant.Expire_time, res.tokenExpires);
+          localStorage.setItem("CUSTOMER", JSON.stringify(res?.data?.user));
           window.location.href = "/";
-          dispatch(setLoading(false));
+          // popUploader(dispatch, false);
         }
       })
       .catch((c) => {
-        // dispatch(setLoading(false));
-        customToastMsg(c.message, 0);
+        // popUploader(dispatch, false);
+        handleError(c);
       });
   };
 
@@ -108,7 +109,7 @@ const SignInPage = () => {
                   </FormGroup>
                   <div className="mb-3 d-flex flex-row justify-content-between">
                     <span
-                      onClick={() => router.push("/forgot-password")}
+                      // onClick={() => router.push("/forgot-password")}
                       className="btn-forgot"
                     >
                       Forgot Password ?
