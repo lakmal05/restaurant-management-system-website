@@ -3,20 +3,28 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-
 import AppData from "@data/app.json";
-import CartData from "@data/cart.json";
-
 import MiniCart from "@layouts/cart/MiniCart";
 import MiniSidebar from "@layouts/sidebar/MiniSidebar";
+import { logout } from "@/src/util/CommonFun";
 
 const DefaultHeader = () => {
+  const [cartTotal, setCartTotal] = useState(0);
   const [mobileMenu, setMobileMenu] = useState(false);
   const [openSubMenu, setOpenSubMenu] = useState(false);
   const [miniCart, setMiniCart] = useState(false);
   const [miniSidebar, setMiniSidebar] = useState(false);
   const [isLogin, setIsLogin] = useState(false); //convert to redux later
   const asPath = usePathname();
+
+  useEffect(() => {
+    setCartTotal(
+      localStorage.getItem("CART_LIST")
+        ? JSON.parse(localStorage.getItem("CART_LIST")).length
+        : 0
+    );
+    setIsLogin(localStorage.getItem("CUSTOMER") ? true : false);
+  }, []);
 
   const isPathActive = (path) => {
     return (asPath.endsWith(path) == 1 && path !== "/") || asPath === path;
@@ -40,7 +48,8 @@ const DefaultHeader = () => {
   }, [asPath]);
 
   const handleLogout = () => {
-    alert("logout");
+    setIsLogin(false);
+    logout();
   };
 
   return (
@@ -108,13 +117,14 @@ const DefaultHeader = () => {
                 >
                   {isLogin ? (
                     <span
-                      className="sb-icon mx-2"
+                      className=" mx-2"
                       onClick={() => {
                         handleLogout();
                       }}
                     >
                       LogOut{" "}
                       <img
+                        height={25}
                         src="/img/ui/icons/logout.svg"
                         alt="icon"
                         className="mx-2"
@@ -122,9 +132,10 @@ const DefaultHeader = () => {
                     </span>
                   ) : (
                     <Link href="/login">
-                      <span className="sb-icon mx-2">
+                      <span className="mx-2">
                         LogIn{" "}
                         <img
+                          height={25}
                           src="/img/ui/icons/login.svg"
                           alt="icon"
                           className="mx-2"
@@ -144,7 +155,7 @@ const DefaultHeader = () => {
                   <span className="sb-icon">
                     <img src="/img/ui/icons/cart.svg" alt="icon" />
                   </span>
-                  <i className="sb-cart-number">{CartData.total}</i>
+                  <i className="sb-cart-number">{cartTotal}</i>
                 </div>
                 {/* button end */}
                 {/* menu btn */}
@@ -172,7 +183,7 @@ const DefaultHeader = () => {
         {/* info bar end */}
         {/* minicart */}
         <div className={`sb-minicart ${miniCart ? "sb-active" : ""}`}>
-          <MiniCart />
+          <MiniCart isOpen={miniCart} />
         </div>
         {/* minicart end */}
       </div>

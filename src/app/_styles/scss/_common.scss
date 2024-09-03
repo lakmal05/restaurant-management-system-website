@@ -14,7 +14,7 @@ preloader
   transition: $tr-lg;
 
   & .sb-preloader-bg {
-    box-shadow: 0 0 8px 0 rgba(0,0,0,.05);
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.05);
     border-radius: 50%;
     position: absolute;
     background-color: $c5;
@@ -386,7 +386,7 @@ pagination
         position: absolute;
         bottom: 0;
         left: 0;
-        content: '';
+        content: "";
         height: 2px;
         width: 0;
         background-color: $c5;
@@ -576,11 +576,11 @@ badge
   }
 
   &.sb-vegan {
-    background-color: #9CCC65;
+    background-color: #9ccc65;
   }
 
   &.sb-hot {
-    background-color: #FF5252;
+    background-color: #ff5252;
   }
 }
 /***************************
@@ -713,7 +713,7 @@ buttons
 
     & .sb-icon {
       background-color: $c5;
-      transform: scale(.95);
+      transform: scale(0.95);
     }
 
     & span {
@@ -737,7 +737,7 @@ buttons
   &.sb-btn-icon {
     & .sb-icon {
       background-color: $c5;
-      transform: scale(.95);
+      transform: scale(0.95);
     }
 
     &.sb-btn-gray {
@@ -758,7 +758,7 @@ buttons
 
     & .sb-icon {
       background-color: $c5;
-      transform: scale(.95);
+      transform: scale(0.95);
     }
 
     & span {
@@ -937,7 +937,7 @@ page transitions
   transform: scale(0);
   z-index: 9;
   opacity: 0.9;
-  box-shadow: 0 0 8px 0 rgba(0,0,0,.05);
+  box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.05);
   transition: 0.6s ease-in-out;
 }
 
@@ -1150,7 +1150,7 @@ animations
   }
 
   50% {
-    transform: scale(.4);
+    transform: scale(0.4);
     opacity: 0.8;
   }
 
@@ -1296,8 +1296,13 @@ spaces
 grid
 
 ***************************/
+.sb-masonry-grid-auto-height {
+  height: auto !important;
+}
+
 .sb-masonry-grid {
   width: calc(100% + 30px);
+  // height: auto !important;
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
