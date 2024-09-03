@@ -15,7 +15,7 @@ export async function getProductById(productId) {
   apiObject.method = "GET",
   apiObject.authentication = true,
   apiObject.isWithoutPrefix = false;
-  apiObject.endpoint = ``;
+  apiObject.endpoint = `api/product/find-by-id/${productId}`;
   apiObject.body = null;
   return await ApiService.callApi(apiObject);
 }

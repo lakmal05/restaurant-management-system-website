@@ -118,11 +118,13 @@ export const customToastMsg = (e, type, c) => {
 export const logout = () => {
   Cookies.remove(constant.ACCESS_TOKEN);
   Cookies.remove(constant.REFRESH_TOKEN);
-  Cookies.remove(constant.Expire_time);
+  // Cookies.remove(constant.Expire_time);
   Cookies.remove(constant.USER_PROFILE);
-  Cookies.remove("Eligible");
-  localStorage.removeItem(constant.CART_LIST);
-  window.location.href = "/signin";
+  // Cookies.remove("Eligible");
+  localStorage.removeItem("CART_LIST");
+  localStorage.removeItem("CUSTOMER");
+
+  window.location.href = "/login";
 };
 
 export const formatPrice = (value) => {
@@ -137,4 +139,14 @@ export const handleError = (c) => {
   c?.response?.data?.message
     ? customToastMsg(c?.response?.data?.message[0], 0)
     : customToastMsg("Sorry! Try again later", 0);
+};
+
+export const truncateDescription = (description, wordLimit) => {
+  if (!description) return "";
+
+  const words = description.split(" ");
+
+  if (words.length <= wordLimit) return description;
+
+  return words.slice(0, wordLimit).join(" ") + "...";
 };
