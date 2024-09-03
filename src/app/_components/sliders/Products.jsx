@@ -10,6 +10,7 @@ import MenuItem from "@components/menu/MenuItem";
 import ProductItem from "@components/products/ProductItem";
 import { useEffect, useState } from "react";
 import { getAllProducts } from "@/src/service/productService";
+import { handleError } from "@/src/util/CommonFun";
 
 const ProductsSlider = ({
   items,
