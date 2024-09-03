@@ -1,8 +1,8 @@
 {
-  "title": "What do you <span>like today?</span>",
+  "title": "Why we are best ?",
   "description": "Consectetur numquam poro nemo veniam<br>eligendi rem adipisci quo modi.",
   "button": {
-    "link": "/shop",
-    "label": "Go shopping now"
+    "link": "/about",
+    "label": "More about us"
   }
 }

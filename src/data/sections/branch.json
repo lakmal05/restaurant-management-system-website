@@ -1,0 +1,13 @@
+{
+  "title": "Beyond Expectations, Closer to You",
+  "description": "<p>Discover our branches where culinary excellence meets local charm. Each location is a testament to our commitment to quality, offering an unforgettable dining experience that transcends the ordinary. Whether you're indulging in a familiar favorite or exploring new flavors, our branches are designed to deliver more than you anticipate.</p><p>Excellence in every detail, from the ambiance to the artistry on your plate, ensures that every visit is a celebration of taste. Join us at any of our branches and experience the unique blend of tradition and innovation that sets us apart.</p>",
+  "image": {
+    "url": "/img/gallery/12.jpg",
+    "alt": "image"
+  },
+  "number": {
+    "value": "17",
+    "label": "Branches"
+  },
+  "signature": "/img/ui/signature.png"
+}
