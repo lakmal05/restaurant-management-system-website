@@ -61,7 +61,7 @@ const PageBanner = ({ pageTitle, breadTitle, description, type }) => {
                     }
                     {asPath.endsWith('/product') == 1 &&
                     <li>
-                      <Link href="/products">Products</Link>
+                      <Link href="/menu">Products</Link>
                     </li>
                     }
                     <li><a dangerouslySetInnerHTML={{__html : clearBreadTitle}} /></li>

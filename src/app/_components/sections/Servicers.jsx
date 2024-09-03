@@ -1,24 +1,25 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { getAllCategories } from "@/src/service/categoriesService";
-import Data from "@data/sections/categories.json";
+import Data from "@data/sections/servicers.json";
 import Link from "next/link";
 import { handleError } from "@/src/util/CommonFun";
 import defaultCategoryImg from "@/public/img/categories/default-category-img.png";
 import parse from "html-react-parser";
+import { getAllServicers } from "@/src/service/serviceService";
 
-const CategoriesSection = ({
+const ServicersSection = ({
   heading = 1,
   paddingTop = 0,
   type = 1,
   columns,
 }) => {
-  const [categoryList, setCategoryList] = useState([]);
+  const [serviceList, setServiceList] = useState([]);
 
   // let dispatch = useDispatch();
 
   useEffect(() => {
-    loadAllCatagories();
+    loadAllServicers();
   }, []);
 
   var columnsClass = "";
@@ -34,30 +35,25 @@ const CategoriesSection = ({
       columnsClass = "col-lg-6";
   }
 
-  const loadAllCatagories = () => {
+  const loadAllServicers = () => {
     let temp = [];
-    setCategoryList([]);
+    setServiceList([]);
     // popUploader(dispatch, true);
-    getAllCategories()
+    getAllServicers()
       .then(async (resp) => {
-        console.log(resp);
-
-        resp?.data?.records.map((category, index) => {
-          if (category?.status === 1) {
-            temp.push({
-              id: category?.id,
-              image:
-                category?.file && Object.keys(category?.file).length > 0
-                  ? category.file?.originalPath
-                  : null,
-              name: category?.name,
-              description:
-                category?.description != null ? category?.description : "",
-              categories_status: category?.status,
-            });
-          }
+        resp?.data?.map((service, index) => {
+          temp.push({
+            id: service?.id,
+            image:
+              service?.file && Object.keys(service?.file).length > 0
+                ? service.file?.originalPath
+                : null,
+            name: service?.name,
+            description:
+              service?.description != null ? service?.description : "",
+          });
         });
-        await setCategoryList(temp);
+        await setServiceList(temp);
         // popUploader(dispatch, false);
       })
       .catch((err) => {
@@ -97,7 +93,7 @@ const CategoriesSection = ({
             </div>
           )}
           <div className="row">
-            {categoryList.map((item, key) => (
+            {serviceList.map((item, key) => (
               <div className={columnsClass} key={`categories-item-${item.id}`}>
                 <a
                   href={"/menu"}
@@ -130,4 +126,4 @@ const CategoriesSection = ({
   );
 };
 
-export default CategoriesSection;
+export default ServicersSection;

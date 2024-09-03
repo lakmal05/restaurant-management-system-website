@@ -1,282 +1,319 @@
 "use client";
-
-import { Formik } from 'formik';
-import AppData from "@data/app.json";
+import { useEffect, useState } from "react";
+import CardDetailsForm from "./CardDetailsForm";
+import { placeOrder } from "@/src/service/reservationService";
+import {
+  customToastMsg,
+  handleError,
+  validateInputs,
+} from "@/src/util/CommonFun";
 
 const CheckoutForm = () => {
+  const [cartTotal, setCartTotal] = useState(0);
+
+  const [customerDetails, setCustomerDetails] = useState({});
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [contactNo, setContactNo] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [orderNote, setOrderNote] = useState("");
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("");
+
+  const [orderData, setOrderData] = useState({});
+  const [isShowPaymentForm, setIsShowPaymentForm] = useState(false);
+  const [paymentId, setPaymentId] = useState("");
+  const [orderProductsList, setOrderProductsList] = useState([]);
+
+  useEffect(() => {
+    setCustomerDetails(
+      localStorage.getItem("CUSTOMER")
+        ? JSON.parse(localStorage.getItem("CUSTOMER"))
+        : {}
+    );
+    setOrderProductsList(
+      localStorage.getItem("CART_LIST")
+        ? JSON.parse(localStorage.getItem("CART_LIST"))
+        : []
+    );
+    setCartTotal(
+      localStorage.getItem("CART_LIST")
+        ? JSON.parse(localStorage.getItem("CART_LIST")).length
+        : 0
+    );
+  }, []);
+
+  useEffect(() => {
+    const cartNumberEl = document.querySelector(".sb-cart-number");
+    cartNumberEl.innerHTML = cartTotal;
+  }, [cartTotal]);
+
+  useEffect(() => {
+    const cartNumberEl = document.querySelector(".sb-cart-number");
+    cartNumberEl.classList.remove("sb-added");
+  }, [firstName]);
+
+  const checkLoginCustomer = () => {
+    if (localStorage.getItem("CUSTOMER")) {
+      handlePlaceOrder();
+    } else {
+      customToastMsg("You have to login before place order");
+    }
+  };
+
+  const handlePlaceOrder = async () => {
+    let isValidated = false;
+    console.log(orderProductsList);
+
+    if (orderProductsList.length === 0) {
+      customToastMsg("First add some products to cart");
+    } else if (address === "") {
+      customToastMsg("Address cannot be empty");
+    } else if (selectedPaymentMethod === "") {
+      customToastMsg("Select payment method");
+    } else {
+      isValidated = true;
+    }
+    if (isValidated) {
+      const cartDetails = localStorage.getItem("CART_LIST")
+        ? JSON.parse(localStorage.getItem("CART_LIST"))
+        : [];
+      const subTotal = cartDetails.reduce((acc, item) => acc + item.total, 0);
+      const total = subTotal + 250;
+      const newArray = orderProductsList.map((item) => ({
+        id: item.id,
+        qty: parseFloat(item.qty),
+      }));
+
+      const data = {
+        paymentType: selectedPaymentMethod,
+        subTotal: parseFloat(total),
+        description: orderNote,
+        userId: customerDetails?.id,
+        orderItems: newArray,
+        firstName: customerDetails?.firstName,
+        lastName: customerDetails?.lastName,
+        contactNo: customerDetails?.customer?.contactNo,
+        email: customerDetails?.email,
+        addressLine: address,
+        orderType: "DELIVERY",
+        paymentId: "",
+      };
+
+      setOrderData(data);
+
+      if (selectedPaymentMethod === "CASH_ON_DELIVERY") {
+        await handlePaymentSuccess(data);
+      } else if (selectedPaymentMethod === "ONLINE_PAYMENT") {
+        setIsShowPaymentForm(true);
+      }
+    }
+  };
+
+  const setPaymentIdToOrderObject = async (paymentId) => {
+    const updatedOrderData = {
+      ...orderData,
+      paymentId: paymentId,
+    };
+    await handlePaymentSuccess(updatedOrderData);
+  };
+
+  const handlePaymentSuccess = (orderDetailsObject) => {
+    const form = document.getElementById("checkoutForm");
+    const status = document.getElementById("checkoutFormStatus");
+
+    console.log(orderDetailsObject);
+
+    // popUploader(dispatch, true);
+    placeOrder(orderDetailsObject)
+      .then((response) => {
+        // popUploader(dispatch, false);
+        customToastMsg(
+          "Thanks for shop with us, your order placed successfully",
+          1
+        );
+        status.style.opacity = "1";
+        status.style.pointerEvents = "auto";
+        setFirstName("");
+        setLastName("");
+        setContactNo("");
+        setEmail("");
+        setAddress("");
+        setOrderNote(0);
+        setSelectedPaymentMethod("");
+
+        localStorage.removeItem("CART_LIST");
+        const cartNumberEl = document.querySelector(".sb-cart-number");
+        setCartTotal(0);
+        cartNumberEl.classList.add("sb-added");
+      })
+      .catch((error) => {
+        // popUploader(dispatch, false);
+        console.log(error);
+        handleError(error);
+      })
+      .finally(() => {
+        setIsShowPaymentForm(false);
+      });
+  };
+
   return (
     <>
-        {/* contact form */}
-        <Formik
-        initialValues = {{ firstname: '', lastname: '', email: '', tel: '', company: '', country: '', city: '', state: '', address: '', postcode: '', message: '', payment_method: 1 }}
-        validate = { values => {
-            const errors = {};
-            if (!values.email) {
-                errors.email = 'Required';
-            } else if (
-                !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-            ) {
-                errors.email = 'Invalid email address';
+      {/* contact form */}
+      {isShowPaymentForm ? (
+        <CardDetailsForm
+          orderPayment={true}
+          getPaymentId={async (paymentId) => {
+            if (paymentId) {
+              console.log(paymentId);
+              setPaymentId(paymentId);
+              await setPaymentIdToOrderObject(paymentId);
+            } else {
+              setIsShowPaymentForm(false);
             }
-            return errors;
-        }}
-        onSubmit = {( values, { setSubmitting } ) => {
-            const form = document.getElementById("checkoutForm");
-            const status = document.getElementById("checkoutFormStatus");
-            const data = new FormData();
-
-            data.append('firstname', values.firstname);
-            data.append('lastname', values.lastname);
-            data.append('email', values.email);
-            data.append('tel', values.tel);
-            data.append('company', values.company);
-            data.append('country', values.country);
-            data.append('city', values.city);
-            data.append('state', values.state);
-            data.append('address', values.address);
-            data.append('postcode', values.postcode);
-            data.append('message', values.message);
-            data.append('payment_method', values.payment_method);
-
-            fetch(form.action, {
-                method: 'POST',
-                body: data,
-                headers: {
-                    'Accept': 'application/json'
-                }
-            }).then(response => {
-                if (response.ok) {
-                    status.innerHTML = "<h5>Thanks, your message is sent successfully.</h5>";
-                    form.reset()
-                } else {
-                    response.json().then(data => {
-                        if (Object.hasOwn(data, 'errors')) {
-                            status.innerHTML = data["errors"].map(error => error["message"]).join(", ")
-                        } else {
-                            status.innerHTML = "<h5>Oops! There was a problem submitting your form</h5>"
-                        }
-                    })
-                }
-            }).catch(error => {
-                status.innerHTML = "<h5>Oops! There was a problem submitting your form</h5>"
-            });
-
-            setSubmitting(false);
-        }}
-        >
-        {({
-            values,
-            errors,
-            touched,
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            isSubmitting,
-            /* and other goodies */
-        }) => (
-        <form onSubmit={handleSubmit} id="checkoutForm" action={AppData.settings.formspreeURL} className="sb-checkout-form">
-            <div className="sb-mb-30">
-                <h3>Billing details</h3>
-            </div>
-            <div className="row">
-                <div className="col-lg-6">
-                <div className="sb-group-input">
-                    <input 
-                        type="text" 
-                        placeholder=" "
-                        name="firstname" 
-                        required="required" 
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.firstname} 
-                    />
-                    <span className="sb-bar"></span>
-                    <label>First name</label>
-                </div>
-                </div>
-                <div className="col-lg-6">
-                <div className="sb-group-input">
-                    <input 
-                        type="text" 
-                        placeholder=" "
-                        name="lastname" 
-                        required="required" 
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.lastname} 
-                    />
-                    <span className="sb-bar"></span>
-                    <label>Last name</label>
-                </div>
-                </div>
-                <div className="col-lg-6">
-                <div className="sb-group-input">
-                    <input 
-                        type="text" 
-                        placeholder=" "
-                        name="company"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.company} 
-                    />
-                    <span className="sb-bar"></span>
-                    <label>Company name</label>
-                </div>
-                </div>
-                <div className="col-lg-6">
-                <div className="sb-group-input">
-                    <input 
-                        type="text" 
-                        placeholder=" "
-                        name="country"
-                        required="required"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.country} 
-                    />
-                    <span className="sb-bar"></span>
-                    <label>Country</label>
-                </div>
-                </div>
-                <div className="col-lg-6">
-                <div className="sb-group-input">
-                    <input 
-                        type="text" 
-                        placeholder=" "
-                        name="city"
-                        required="required"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.city} 
-                    />
-                    <span className="sb-bar"></span>
-                    <label>City</label>
-                </div>
-                </div>
-                <div className="col-lg-6">
-                <div className="sb-group-input">
-                    <input 
-                        type="text" 
-                        placeholder=" "
-                        name="state"
-                        required="required"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.state} 
-                    />
-                    <span className="sb-bar"></span>
-                    <label>State / Province</label>
-                </div>
-                </div>
-                <div className="col-lg-6">
-                <div className="sb-group-input">
-                    <input 
-                        type="text" 
-                        placeholder=" "
-                        name="address"
-                        required="required"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.address} 
-                    />
-                    <span className="sb-bar"></span>
-                    <label>Address</label>
-                </div>
-                </div>
-                <div className="col-lg-6">
-                <div className="sb-group-input">
-                    <input 
-                        type="text" 
-                        placeholder=" "
-                        name="postcode"
-                        required="required"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.postcode} 
-                    />
-                    <span className="sb-bar"></span>
-                    <label>Postcode</label>
-                </div>
-                </div>
-                <div className="col-lg-6">
-                <div className="sb-group-input">
-                    <input 
-                        type="tel" 
-                        placeholder=" "
-                        name="tel"
-                        required="required"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.tel} 
-                    />
-                    <span className="sb-bar"></span>
-                    <label>Phone</label>
-                </div>
-                </div>
-                <div className="col-lg-6">
-                <div className="sb-group-input">
-                    <input 
-                        type="email" 
-                        placeholder=" "
-                        name="email"
-                        required="required"
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.email} 
-                    />
-                    <span className="sb-bar"></span>
-                    <label>Email</label>
-                </div>
-                </div>
-            </div>
-            <div className="sb-mb-30">
-                <h3>Additional information</h3>
-            </div>
-            <div className="sb-group-input">
-                <textarea 
-                    placeholder=" "
-                    name="message" 
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.message} 
+          }}
+        />
+      ) : (
+        <form id="checkoutForm" className="sb-checkout-form">
+          <div className="sb-mb-30">
+            <h3>Shipping Details</h3>
+          </div>
+          <div className="row">
+            <div className="col-lg-6">
+              <div className="sb-group-input">
+                <input
+                  type="text"
+                  disabled={true}
+                  value={customerDetails?.firstName}
                 />
                 <span className="sb-bar"></span>
-                <label>Order notes</label>
+                {Object.keys(customerDetails).length === 0 && (
+                  <label>First Name</label>
+                )}
+              </div>
             </div>
-            <div className="sb-mb-30">
-                <h3 className="sb-mb-30">Payment method</h3>
-                <ul>
-                    <li className="sb-radio">
-                        <input type="radio" id="option-1" name="payment_method" defaultChecked value="1" />
-                        <label htmlFor="option-1">Direct bank transfer</label>
-                        <div className="sb-check"></div>
-                    </li>
-                    <li className="sb-radio">
-                        <input type="radio" id="option-2" name="payment_method" value="2" />
-                        <label htmlFor="option-2">Check payments</label>
-                        <div className="sb-check"></div>
-                    </li>
-                    <li className="sb-radio">
-                        <input type="radio" id="option-3" name="payment_method" value="3" />
-                        <label htmlFor="option-3">Cash on delivery</label>
-                        <div className="sb-check"></div>
-                    </li>
-                </ul>
+            <div className="col-lg-6">
+              <div className="sb-group-input">
+                <input
+                  type="text"
+                  disabled={true}
+                  value={customerDetails?.lastName}
+                />
+                <span className="sb-bar"></span>
+                {Object.keys(customerDetails).length === 0 && (
+                  <label>Last Name</label>
+                )}
+              </div>
             </div>
-            {/* button */}
-            <button type="submit" className="sb-btn sb-m-0">
-                <span className="sb-icon">
-                    <img src="/img/ui/icons/arrow.svg" alt="icon" />
-                </span>
-                <span>Place order</span>
-            </button>
-            {/* button end */}
 
-            <div id="checkoutFormStatus" className="form-status"></div>
+            <div className="col-lg-6">
+              <div className="sb-group-input">
+                <input
+                  type="text"
+                  placeholder=" "
+                  name="address"
+                  required="required"
+                  onChange={(e) => {
+                    setAddress(e.target.value);
+                  }}
+                  value={address}
+                />
+                <span className="sb-bar"></span>
+                <label>Address</label>
+              </div>
+            </div>
+
+            <div className="col-lg-6">
+              <div className="sb-group-input">
+                <input
+                  type="number"
+                  disabled={true}
+                  value={customerDetails?.customer?.contactNo}
+                />
+                <span className="sb-bar"></span>
+                {Object.keys(customerDetails).length === 0 && (
+                  <label>Contact No</label>
+                )}
+              </div>
+            </div>
+            <div className="col-lg-12">
+              <div className="sb-group-input">
+                <input
+                  type="email"
+                  disabled={true}
+                  value={customerDetails?.email}
+                />
+                <span className="sb-bar"></span>
+                {Object.keys(customerDetails).length === 0 && (
+                  <label>Email</label>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="sb-mb-30">
+            <h3>Additional information</h3>
+          </div>
+          <div className="sb-group-input">
+            <textarea
+              placeholder=" "
+              name="message"
+              onChange={(e) => {
+                setOrderNote(e.target.value);
+              }}
+              value={orderNote}
+            />
+            <span className="sb-bar"></span>
+            <label>Order notes</label>
+          </div>
+          <div className="sb-mb-30">
+            <h3 className="sb-mb-30">Payment method</h3>
+            <ul>
+              <li className="sb-radio">
+                <input
+                  type="radio"
+                  id="option-1"
+                  name="payment_method"
+                  value="ONLINE_PAYMENT"
+                  onChange={(e) => {
+                    setSelectedPaymentMethod(e.target.value);
+                  }}
+                />
+                <label htmlFor="option-1">Online Payment</label>
+                <div className="sb-check"></div>
+              </li>
+
+              <li className="sb-radio">
+                <input
+                  type="radio"
+                  id="option-3"
+                  name="payment_method"
+                  value="CASH_ON_DELIVERY"
+                  onChange={(e) => {
+                    setSelectedPaymentMethod(e.target.value);
+                  }}
+                />
+                <label htmlFor="option-3">Cash on delivery</label>
+                <div className="sb-check"></div>
+              </li>
+            </ul>
+          </div>
+          {/* button */}
+          <button
+            type="button"
+            className="sb-btn sb-m-0"
+            onClick={() => {
+              checkLoginCustomer();
+            }}
+          >
+            <span className="sb-icon">
+              <img src="/img/ui/icons/arrow.svg" alt="icon" />
+            </span>
+            <span>Place order</span>
+          </button>
+          {/* button end */}
         </form>
-        )}
-        </Formik>
-        {/* contact form end */}
+      )}
+      {/* contact form end */}
     </>
   );
 };
