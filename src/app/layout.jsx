@@ -15,7 +15,6 @@ const monoton = Monoton({
   variable: "--font-monoton",
   display: "swap",
 });
-
 import "@styles/css/plugins/bootstrap.min.css";
 import "@styles/css/plugins/swiper.min.css";
 import "@styles/css/plugins/font-awesome.min.css";
@@ -30,6 +29,7 @@ import "./globals.css";
 import ScrollbarProgress from "@layouts/scrollbar-progress/Index";
 
 import AppData from "@data/app.json";
+import "react-toastify/dist/ReactToastify.css";
 import store from "../redux";
 import { Suspense } from "react";
 import { ToastContainer } from "react-toastify";
@@ -49,11 +49,11 @@ const Layouts = ({ children }) => {
     <html lang="en" className={`${rubik.variable} ${monoton.variable}`}>
       <body>
         {/* <Provider store={store}> */}
-          <Suspense fallback={<Loader />}>
-            <Loader />
-            <div className="sb-app">{children}</div>
-            <ToastContainer newestOnTop />
-          </Suspense>
+        <Suspense fallback={<Loader />}>
+          <Loader />
+          <div className="sb-app">{children}</div>
+          <ToastContainer newestOnTop />
+        </Suspense>
         {/* </Provider> */}
       </body>
     </html>

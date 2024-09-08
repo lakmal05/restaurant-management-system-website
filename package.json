@@ -15,6 +15,7 @@
     "date-fns": "^3.2.0",
     "formik": "^2.4.5",
     "gray-matter": "^4.0.3",
+    "html-react-parser": "^5.1.15",
     "isotope-layout": "^3.0.6",
     "js-cookie": "^3.0.5",
     "mapbox-gl": "^3.1.0",

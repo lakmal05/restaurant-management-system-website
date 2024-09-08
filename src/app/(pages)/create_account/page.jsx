@@ -68,17 +68,19 @@ const Page = () => {
 
   const validateInputsDetails = () => {
     if (temp.firstName === "") {
-      alert("First name cannot be empty");
+      customToastMsg("First name cannot be empty");
     } else if (temp.lastName === "") {
-      alert("Last name cannot be empty");
+      customToastMsg("Last name cannot be empty");
     } else if (!validateInputs(temp.password, ["isEmpty"]).isValid) {
-      alert(validateInputs(temp.password, ["isEmpty"]).errorMessage);
+      customToastMsg(validateInputs(temp.password, ["isEmpty"]).errorMessage);
     } else if (temp.password !== temp?.con_password) {
       customToastMsg("Recheck confirmation password");
     } else if (temp.contactNo === "") {
-      alert("Contact No cannot be empty");
+      customToastMsg("Contact No cannot be empty");
     } else if (!validateInputs(temp.email, ["isEmpty", "isEmail"]).isValid) {
-      alert(validateInputs(temp.email, ["isEmpty", "isEmail"]).errorMessage);
+      customToastMsg(
+        validateInputs(temp.email, ["isEmpty", "isEmail"]).errorMessage
+      );
     } else {
       handleSignIn();
     }

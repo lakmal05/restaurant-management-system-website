@@ -4,7 +4,7 @@ import { Formik } from "formik";
 import AppData from "@data/app.json";
 import { useEffect, useState } from "react";
 import { sendInquiry } from "@/src/service/inquiryService";
-import { handleError } from "@/src/util/CommonFun";
+import { customToastMsg, handleError } from "@/src/util/CommonFun";
 
 const ContactForm = () => {
   const [customerDetails, setCustomerDetails] = useState({});
